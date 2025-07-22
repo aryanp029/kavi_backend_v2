@@ -34,7 +34,14 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
+    GEMINI_API_KEY: str
 
+    LINKEDIN_CLIENT_ID: str
+    LINKEDIN_CLIENT_SECRET: str
+    LINKEDIN_EMAIL: str
+    LINKEDIN_PASSWORD: str
+    FRONTEND_URL: str
+    
     @computed_field
     @property
     def server_host(self) -> str:

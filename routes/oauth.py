@@ -26,7 +26,9 @@ async def google_callback(code: str, state: str = None, db: Session = Depends(ge
     if not code:
         raise HTTPException(status_code=400, detail="Authorization code not provided")
     try:
-        return await oauth_login("google", code, db)
+        tokens = await oauth_login("google", code, db)
+        frontend_url = f"{settings.FRONTEND_URL}/oauth-success?access_token={tokens['access_token']}&refresh_token={tokens['refresh_token']}"
+        return RedirectResponse(frontend_url)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -46,6 +48,8 @@ async def linkedin_callback(code: str, state: str = None, db: Session = Depends(
     if not code:
         raise HTTPException(status_code=400, detail="Authorization code not provided")
     try:
-        return await oauth_login("linkedin", code, db)
+        tokens = await oauth_login("linkedin", code, db)
+        frontend_url = f"{settings.FRONTEND_URL}/oauth-success?access_token={tokens['access_token']}&refresh_token={tokens['refresh_token']}"
+        return RedirectResponse(frontend_url)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 from models.user import User
 from schemas.user import UserCreate, UserUpdate
 from fastapi import HTTPException, status
+import os
+from fastapi import UploadFile
 
 class UserService:
     def __init__(self, db: Session):
@@ -79,3 +81,12 @@ class UserService:
         if user:
             user.last_login_at = datetime.now(timezone.utc)
             self.db.commit() 
+
+def save_resume_file(cv_file: UploadFile, user_id: str) -> str:
+    """Save uploaded resume/CV file to static/user_id/ directory and return the file path."""
+    static_dir = os.path.join("static", str(user_id))
+    os.makedirs(static_dir, exist_ok=True)
+    file_location = os.path.join(static_dir, cv_file.filename)
+    with open(file_location, "wb") as f:
+        f.write(cv_file.file.read())
+    return file_location 

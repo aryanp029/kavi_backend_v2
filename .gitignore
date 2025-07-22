@@ -6,9 +6,13 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+__pycache__/
+alembic/versions/
+static/
 # C extensions
 *.so
+venv
+.env
 
 # Distribution / packaging
 .Python

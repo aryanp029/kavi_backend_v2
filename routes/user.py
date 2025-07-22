@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List
 from core.database import get_db
 from auth.dependencies import get_current_user
 from models.user import User
-from schemas.user import UserCreate, UserUpdate, UserResponse, UserListResponse
+from schemas.user import UserCreate, UserUpdate, UserResponse, UserListResponse, ResumeUploadCreate, ResumeUploadResponse
 from services.user_service import UserService
+from datetime import datetime, timezone
+import uuid
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -26,6 +28,38 @@ async def update_current_user_profile(
     user_service = UserService(db)
     updated_user = user_service.update_user(current_user.id, user_update)
     return updated_user
+
+@router.post("/me/resume", response_model=ResumeUploadResponse)
+async def upload_resume(
+    resume: ResumeUploadCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Upload a resume for the current user. Summary is hardcoded for now."""
+    # Simulate ORM insert (replace with actual ORM logic as needed)
+    resume_id = uuid.uuid4()
+    now = datetime.now(timezone.utc)
+    summary = "This is a hardcoded summary."
+    # Here you would save to DB, e.g. ResumeUpload(...)
+    return ResumeUploadResponse(
+        id=resume_id,
+        user_id=current_user.id,
+        file_path=resume.file_path,
+        summary=summary,
+        uploaded_at=now
+    )
+
+def extract_text_from_cv(cv_file: UploadFile) -> str:
+    # Placeholder for actual CV text extraction logic
+    return f"Extracted text from: {cv_file.filename}"
+
+@router.post("/me/read-cv")
+async def read_cv(
+    cv: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    cv_data = extract_text_from_cv(cv)
+    return {"cv_data": cv_data}
 
 @router.get("/", response_model=List[UserListResponse])
 async def get_users(

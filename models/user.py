@@ -5,6 +5,7 @@ from core.database import Base
 from datetime import datetime, timezone
 from typing import Optional, List
 import uuid
+from models.resume import Resume
 
 class User(Base):
     __tablename__ = 'users'
@@ -18,6 +19,8 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    
-    # Relationship to OAuth accounts
+    # user_summary
     oauth_accounts: Mapped[List["OAuthAccount"]] = relationship("OAuthAccount", back_populates="user")
+    resume_upload: Mapped[Optional["Resume"]] = relationship("Resume", back_populates="user", uselist=False)
+
+
