@@ -54,20 +54,19 @@ async def _linkedin_oauth_login(code: str, db: Session) -> dict:
         "redirect_uri": "http://127.0.0.1:8000/api/auth/linkedin/callback",
         "client_id": settings.LINKEDIN_CLIENT_ID,
         "client_secret": settings.LINKEDIN_CLIENT_SECRET,
+        "scope": "openid profile email"
     }
 
     token_json = await exchange_code_for_token("https://www.linkedin.com/oauth/v2/accessToken", token_data)
 
-    profile_data = await fetch_user_info("https://api.linkedin.com/v2/me", token_json["access_token"])
-    email_data = await fetch_user_info("https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))", token_json["access_token"])
-
-    email = email_data["elements"][0]["handle~"]["emailAddress"]
-    first_name = profile_data.get("localizedFirstName")
+    userinfo = await fetch_user_info("https://api.linkedin.com/v2/userinfo", token_json["access_token"])
+    email = userinfo.get("email")
+    first_name = userinfo.get("given_name")
 
     oauth_user_info = OAuthUserInfo(
         email=email,
         first_name=first_name,
-        provider_sub=profile_data["id"],
+        provider_sub=userinfo["sub"],
         provider=OAuthProviderEnum.LINKEDIN
     )
 

@@ -38,7 +38,7 @@ async def linkedin_login():
         "response_type": "code",
         "client_id": settings.LINKEDIN_CLIENT_ID,
         "redirect_uri": "http://127.0.0.1:8000/api/auth/linkedin/callback",
-        "scope": "r_liteprofile r_emailaddress"
+        "scope": "openid profile email"
     }
     url = f"https://www.linkedin.com/oauth/v2/authorization?{urlencode(params)}"
     return RedirectResponse(url)
