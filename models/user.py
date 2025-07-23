@@ -22,6 +22,6 @@ class User(Base):
     # user_summary
     oauth_accounts: Mapped[List["OAuthAccount"]] = relationship("OAuthAccount", back_populates="user")
     resume_upload: Mapped[Optional["Resume"]] = relationship("Resume", back_populates="user", uselist=False)
-    onboarding_summary: Mapped[Optional["OnboardingSummary"]] = relationship("OnboardingSummary", back_populates="user", uselist=False)
+    # onboarding_summary: Mapped[Optional["OnboardingSummary"]] = relationship("OnboardingSummary", back_populates="user", uselist=False)
 
 
