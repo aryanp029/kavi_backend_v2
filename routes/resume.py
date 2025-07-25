@@ -6,6 +6,7 @@ from models.user import User
 from models.resume import Resume
 from services.resume_service import process_and_save_resume
 from core.database import get_db
+from uuid import UUID
 
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 
@@ -40,4 +41,18 @@ def list_resumes(db: Session = Depends(get_db)):
             "uploaded_at": r.uploaded_at,
         }
         for r in resumes
-    ] 
+    ]
+
+@router.delete("/{resume_id}", status_code=204)
+def delete_resume(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Delete a resume by its ID for the current user."""
+    resume = db.query(Resume).filter(Resume.id == resume_id, Resume.user_id == current_user.id).first()
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    db.delete(resume)
+    db.commit()
+    return None 
