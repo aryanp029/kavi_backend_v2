@@ -7,6 +7,8 @@ from core.config_loader import settings
 from core.database import Base
 from models.user import User
 from models.oauth import OAuthAccount
+from models.resume import Resume
+from models.onboarding_summary import OnboardingSummary
 
 from alembic import context
 
